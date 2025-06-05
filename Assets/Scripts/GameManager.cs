@@ -1,14 +1,39 @@
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
+using TMPro;
+
 public class GameManager : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [SerializeField] private GameObject sentencePrefab;
+    [SerializeField] private Canvas canvas;
+    
     void Start()
     {
-        // A correct website page.
         StartCoroutine(GetRequest("https://random-word-api.vercel.app/api?words=1&length=9"));
+    }
 
+    void Awake()
+    {
+        Messenger<int>.AddListener(GameEvent.WORD_DONE, OnWordDone);
+    }
+
+    void onDestroy()
+    {
+        Messenger<int>.RemoveListener(GameEvent.WORD_DONE, OnWordDone);
+    }
+
+    void OnWordDone(int attempts)
+    {
+        print(attempts);
+        StartCoroutine(GetRequest("https://random-word-api.vercel.app/api?words=1&length=9"));
+    }
+
+    void CreatePrefab(string words)
+    {
+        GameObject sentence = Instantiate(sentencePrefab, canvas.transform);
+        Word word = sentence.GetComponent<Word>();
+        word.characters = words;
     }
 
     IEnumerator GetRequest(string uri)
@@ -32,6 +57,8 @@ public class GameManager : MonoBehaviour
                     break;
                 case UnityWebRequest.Result.Success:
                     Debug.Log(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text.Substring(2, webRequest.downloadHandler.text.Length - 4));
+                    CreatePrefab(webRequest.downloadHandler.text.Substring(2, webRequest.downloadHandler.text.Length - 4));
+                    
                     break;
             }
         }

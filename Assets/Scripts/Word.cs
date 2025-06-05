@@ -7,7 +7,7 @@ public class Word : MonoBehaviour
     [SerializeField] public string characters;
     [SerializeField] private TextMeshProUGUI textBox;
     private int _index = 0;
-    
+    private int _attempts = 0;
     void Start()
     {
         textBox.text = characters;
@@ -28,6 +28,7 @@ public class Word : MonoBehaviour
             {
                 if (Input.GetKeyDown(keyCode))
                 {
+                    _attempts++;
                     if (keyCode == KeyCode.Space && characters[_index] == ' ')
                     {
                         IncrementIndex();
@@ -46,6 +47,7 @@ public class Word : MonoBehaviour
 
         if (_index == characters.Length)
         {
+            Messenger<int>.Broadcast(GameEvent.WORD_DONE, _attempts);
             Destroy(this.gameObject);
         }
     }
