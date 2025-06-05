@@ -1,13 +1,22 @@
+using System;
 using TMPro;
 using UnityEngine;
 
 public class Word : MonoBehaviour
 {
-    [SerializeField] private string characters;
-    [SerializeField] private TextMeshProUGUI textBox; 
+    [SerializeField] public string characters;
+    [SerializeField] private TextMeshProUGUI textBox;
+    private int _index = 0;
+    
     void Start()
     {
         textBox.text = characters;
+    }
+
+    void IncrementIndex()
+    {
+        _index++;
+        textBox.text = characters.Substring(_index, characters.Length - _index);
     }
 
     // Update is called once per frame
@@ -19,10 +28,25 @@ public class Word : MonoBehaviour
             {
                 if (Input.GetKeyDown(keyCode))
                 {
-                    Debug.Log("Key pressed: " + keyCode);
-                    break;
+                    if (keyCode == KeyCode.Space && characters[_index] == ' ')
+                    {
+                        IncrementIndex();
+                    }
+                    else if (Char.ToUpper(characters[_index]) == keyCode.ToString()[0])
+                    {
+                        IncrementIndex();
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
             }
+        }
+
+        if (_index == characters.Length)
+        {
+            Destroy(this.gameObject);
         }
     }
 }
