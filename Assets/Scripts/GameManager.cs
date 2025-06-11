@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
 
     void CreatePrefab(string words)
     {
-        GameObject sentence = Instantiate(sentencePrefab, canvas.transform);
+        GameObject sentence = Instantiate(sentencePrefab, canvas.transform); 
         Word word = sentence.GetComponent<Word>();
         word.characters = words;
     }
