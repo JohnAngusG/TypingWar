@@ -1,17 +1,19 @@
 using UnityEngine;
-using UnityEngine.Networking;
-using System.Collections;
-using TMPro;
+
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameObject sentencePrefab;
     [SerializeField] private Canvas canvas;
-    
-    void Start()
+    [SerializeField] private WordLoader wordLoader;
+
+    private string[] _playerOneWords;
+
+    private void Start()
     {
-        StartCoroutine(GetRequest("https://random-word-api.vercel.app/api?words=1&length=9"));
+        wordLoader.GetWords(OnWordsReceived);
     }
+
 
     void Awake()
     {
@@ -26,9 +28,21 @@ public class GameManager : MonoBehaviour
     void OnWordDone(int attempts)
     {
         print(attempts);
-        StartCoroutine(GetRequest("https://random-word-api.vercel.app/api?words=1&length=9"));
     }
 
+    
+    private void OnWordsReceived(string[] words)
+    {
+        if (words != null)
+        {
+            _playerOneWords = words;
+        }
+        else
+        {
+            Debug.LogError("Failed to receive words");
+        }
+    }
+    
     void CreatePrefab(string words)
     {
         GameObject sentence = Instantiate(sentencePrefab, canvas.transform); 
@@ -36,31 +50,4 @@ public class GameManager : MonoBehaviour
         word.characters = words;
     }
 
-    IEnumerator GetRequest(string uri)
-    {
-        using (UnityWebRequest webRequest = UnityWebRequest.Get(uri))
-        {
-            // Request and wait for the desired page.
-            yield return webRequest.SendWebRequest();
-
-            string[] pages = uri.Split('/');
-            int page = pages.Length - 1;
-
-            switch (webRequest.result)
-            {
-                case UnityWebRequest.Result.ConnectionError:
-                case UnityWebRequest.Result.DataProcessingError:
-                    Debug.LogError(pages[page] + ": Error: " + webRequest.error);
-                    break;
-                case UnityWebRequest.Result.ProtocolError:
-                    Debug.LogError(pages[page] + ": HTTP Error: " + webRequest.error);
-                    break;
-                case UnityWebRequest.Result.Success:
-                    Debug.Log(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text.Substring(2, webRequest.downloadHandler.text.Length - 4));
-                    CreatePrefab(webRequest.downloadHandler.text.Substring(2, webRequest.downloadHandler.text.Length - 4));
-                    
-                    break;
-            }
-        }
-    }
 }

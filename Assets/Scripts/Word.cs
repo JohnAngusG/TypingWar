@@ -18,37 +18,5 @@ public class Word : MonoBehaviour
         _index++;
         textBox.text = characters.Substring(_index, characters.Length - _index);
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.anyKeyDown)
-        {
-            foreach (KeyCode keyCode in System.Enum.GetValues(typeof(KeyCode)))
-            {
-                if (Input.GetKeyDown(keyCode))
-                {
-                    _attempts++;
-                    if (keyCode == KeyCode.Space && characters[_index] == ' ')
-                    {
-                        IncrementIndex();
-                    }
-                    else if (Char.ToUpper(characters[_index]) == keyCode.ToString()[0])
-                    {
-                        IncrementIndex();
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-            }
-        }
-
-        if (_index == characters.Length)
-        {
-            Messenger<int>.Broadcast(GameEvent.WORD_DONE, _attempts);
-            Destroy(this.gameObject);
-        }
-    }
+    
 }
