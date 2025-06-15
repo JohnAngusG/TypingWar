@@ -35,7 +35,6 @@ public class Round : MonoBehaviour
         _textBox.text = GetCurrentWord();
     }
     
-    
     private string GetCurrentWord()
     {
         string formattedWord = "";
@@ -74,7 +73,6 @@ public class Round : MonoBehaviour
         }
     }
     
-    
     private void SetChars(string word)
     {
         for(int i = 0; i < word.Length; i++)
@@ -105,14 +103,10 @@ public class Round : MonoBehaviour
             _index = 0;
             return;
         }
-        _index--;
         
-        print("Delete pressed!");
+        _index--;
         _word[_index].SetCorrect(false);
         _word[_index].SetTyped(false);
         UpdateWord();
-        
-        
-        
     }
 }

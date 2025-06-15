@@ -14,8 +14,7 @@ public class GameManager : MonoBehaviour
     {
         wordLoader.GetWords(OnWordsReceived);
     }
-
-
+    
     void Awake()
     {
         Messenger.AddListener(GameEvent.WORD_DONE, OnWordDone);
@@ -34,10 +33,26 @@ public class GameManager : MonoBehaviour
             return;
 
         }
+
+        if (_currentWord == 1)
+        {
+            ReverseNextWord();
+        }
         
         CreateRound(_playerOneWords[_currentWord]);
     }
 
+    private void ReverseNextWord()
+    {
+        if (_currentWord < _playerOneWords.Length - 2)
+        {
+            char[] tempContainer = _playerOneWords[_currentWord + 1].ToCharArray();
+            Array.Reverse(tempContainer);
+            _playerOneWords[_currentWord + 1] =  new string(tempContainer);
+        }
+        
+    }
+    
     
     private void OnWordsReceived(string[] words)
     {
@@ -51,7 +66,6 @@ public class GameManager : MonoBehaviour
             Debug.LogError("Failed to receive words");
         }
     }
-
     
     void CreateRound(string characters)
     {
@@ -59,5 +73,4 @@ public class GameManager : MonoBehaviour
         Round round = roundObj.GetComponent<Round>();
         round.StartRound(characters);
     }
-
 }
