@@ -43,6 +43,11 @@ public class GameManager : MonoBehaviour
         {
             wordLoader.GetForeignWord(OnForeignWordReceived);
         }
+
+        if (_currentWord == 5)
+        {
+            PigLatinNextWord();
+        }
         
         CreateRound(_playerOneWords[_currentWord]);
     }
@@ -57,7 +62,6 @@ public class GameManager : MonoBehaviour
         }
     }
     
-    
     private void OnWordsReceived(string[] words)
     {
         if (words != null)
@@ -71,6 +75,23 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void PigLatinNextWord()
+    {
+        string tempWord = _playerOneWords[_currentWord + 1];
+        
+        if (tempWord[0] == 'a' || tempWord[0] == 'e' || tempWord[0] == 'i' || tempWord[0] == 'o' || tempWord[0] == 'u')
+        {
+            tempWord = tempWord + "way";
+        }
+        else
+        {
+            tempWord = tempWord.Substring(1) + tempWord[0] + "ay";
+        }
+        _playerOneWords[_currentWord + 1] = tempWord;
+    }
+    
+    
+    
     private void OnForeignWordReceived(string word)
     {
         print(word);
