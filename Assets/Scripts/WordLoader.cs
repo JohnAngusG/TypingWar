@@ -11,6 +11,11 @@ public class WordLoader : MonoBehaviour
     {
         StartCoroutine(FetchWords(onComplete));
     }
+
+    public void GetForeignWord(Action<string> onComplete)
+    {
+        StartCoroutine(FetchForeignWord(onComplete));
+    }
     
     private IEnumerator FetchWords(Action<string[]> callback)
     {
@@ -36,6 +41,35 @@ public class WordLoader : MonoBehaviour
             }
         }
     }
+    
+    private IEnumerator FetchForeignWord(Action<string> callback)
+    {
+        using (UnityWebRequest webRequest = UnityWebRequest.Get("https://random-word-api.herokuapp.com/word?lang=fr"))
+        {
+            yield return webRequest.SendWebRequest();
+
+            switch (webRequest.result)
+            {
+                case UnityWebRequest.Result.ConnectionError:
+                case UnityWebRequest.Result.DataProcessingError:
+                    Debug.LogError("Error: " + webRequest.error);
+                    callback?.Invoke(null); // Return null on error
+                    break;
+                case UnityWebRequest.Result.ProtocolError:
+                    Debug.LogError("HTTP Error: " + webRequest.error);
+                    callback?.Invoke(null);
+                    break;
+                case UnityWebRequest.Result.Success:
+                    string word = webRequest.downloadHandler.text.Trim('[', ']').Trim().Trim('"');
+                    callback?.Invoke(word); // Return the words array
+                    break;
+            }
+        }
+    }
+    
+    
+    
+    
     
     private string[] ParseWordsFromJson(string jsonResponse)
     {

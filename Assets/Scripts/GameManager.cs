@@ -38,6 +38,11 @@ public class GameManager : MonoBehaviour
         {
             ReverseNextWord();
         }
+
+        if (_currentWord == 3)
+        {
+            wordLoader.GetForeignWord(OnForeignWordReceived);
+        }
         
         CreateRound(_playerOneWords[_currentWord]);
     }
@@ -50,7 +55,6 @@ public class GameManager : MonoBehaviour
             Array.Reverse(tempContainer);
             _playerOneWords[_currentWord + 1] =  new string(tempContainer);
         }
-        
     }
     
     
@@ -65,6 +69,19 @@ public class GameManager : MonoBehaviour
         {
             Debug.LogError("Failed to receive words");
         }
+    }
+
+    private void OnForeignWordReceived(string word)
+    {
+        print(word);
+        if (_currentWord < _playerOneWords.Length - 2)
+        {
+            if (word != null)
+            {
+                _playerOneWords[_currentWord + 1] = word;
+            }
+        }
+        
     }
     
     void CreateRound(string characters)
