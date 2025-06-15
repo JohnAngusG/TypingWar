@@ -4,11 +4,9 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private GameObject sentencePrefab;
-    [SerializeField] private Canvas canvas;
+    [SerializeField] private GameObject roundPrefab;
     [SerializeField] private WordLoader wordLoader;
-    
-    private Word _currentWordObject;
+
     private string[] _playerOneWords;
     private int _currentWord; 
     
@@ -21,13 +19,11 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         Messenger.AddListener(GameEvent.WORD_DONE, OnWordDone);
-        Messenger<char>.AddListener(GameEvent.KEY_PRESSED, OnKeyPressed);
     }
 
     void OnDestroy()
     {
         Messenger.RemoveListener(GameEvent.WORD_DONE, OnWordDone);
-        Messenger<char>.RemoveListener(GameEvent.KEY_PRESSED, OnKeyPressed);
     }
 
     void OnWordDone()
@@ -39,7 +35,7 @@ public class GameManager : MonoBehaviour
 
         }
         
-        CreatePrefab(_playerOneWords[_currentWord]);
+        CreateRound(_playerOneWords[_currentWord]);
     }
 
     
@@ -48,7 +44,7 @@ public class GameManager : MonoBehaviour
         if (words != null)
         {
             _playerOneWords = words;
-            CreatePrefab(_playerOneWords[_currentWord]);
+            CreateRound(_playerOneWords[_currentWord]);
         }
         else
         {
@@ -56,21 +52,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void OnKeyPressed(char key)
-    {
-        print(key);
-        if (key == Char.ToUpper(_currentWordObject.GetCurrentChar()))
-        {
-            _currentWordObject.IncrementIndex();
-        }
-    }
     
-    void CreatePrefab(string characters)
+    void CreateRound(string characters)
     {
-        GameObject sentence = Instantiate(sentencePrefab, canvas.transform); 
-        Word word = sentence.GetComponent<Word>();
-        word.characters = characters;
-        _currentWordObject = word;
+        GameObject roundObj = Instantiate(roundPrefab); 
+        Round round = roundObj.GetComponent<Round>();
+        round.StartRound(characters);
     }
 
 }

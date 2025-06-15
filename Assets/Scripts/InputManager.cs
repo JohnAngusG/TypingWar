@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class InputManager : MonoBehaviour
@@ -15,11 +16,15 @@ public class InputManager : MonoBehaviour
                     {
                         Messenger.Broadcast(GameEvent.BACKSPACE_PRESSED);
                     }
+                    else if (keyCode >= KeyCode.A && keyCode <= KeyCode.Z)
+                    {
+                        Messenger<char>.Broadcast(GameEvent.KEY_PRESSED, Char.ToLower(keyCode.ToString()[0]));
+                    }
                     else
                     {
-                        Messenger<char>.Broadcast(GameEvent.KEY_PRESSED, keyCode.ToString()[0]);
+                        return;
                     }
-                    
+
                 }
             }
         }
